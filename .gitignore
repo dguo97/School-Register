@@ -1,0 +1,22 @@
+﻿# Visual Studio
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.log
+
+# Access databases: they hold real names, phone numbers and password hashes.
+# NEVER commit a real database.
+*.accdb
+*.laccdb
+*.mdb
+*.ldb
+
+# Files Visual Studio creates when it upgrades an old project.
+# They contain folder paths from your own computer (your username, OneDrive folder names), so keep them out.
+Backup/
+UpgradeLog*.htm
+_UpgradeReport_Files/
