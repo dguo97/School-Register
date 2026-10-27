@@ -1,0 +1,54 @@
+name: Build and release
+
+on:
+  push:
+    branches: [ master, main ]
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [ x86, x64 ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build (${{ matrix.arch }})
+        run: msbuild src/SchoolRegister.vbproj /p:Configuration=Release /p:PlatformTarget=${{ matrix.arch }} /p:OutputPath=bin/${{ matrix.arch }}/
+
+      - name: Package (${{ matrix.arch }})
+        shell: pwsh
+        run: |
+          $dir = "SchoolRegister-${{ matrix.arch }}"
+          New-Item -ItemType Directory -Path $dir | Out-Null
+          Copy-Item "src/bin/${{ matrix.arch }}/*" $dir -Recurse -Exclude *.pdb,*.xml
+          Copy-Item LICENSE $dir
+          Copy-Item docs/RELEASE_README.txt "$dir/READ ME FIRST.txt"
+          Compress-Archive -Path "$dir/*" -DestinationPath "SchoolRegister-${{ matrix.arch }}.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SchoolRegister-${{ matrix.arch }}
+          path: SchoolRegister-${{ matrix.arch }}.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true

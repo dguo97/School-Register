@@ -16,22 +16,26 @@ It was originally built for an international school in Nigeria (creche, nursery 
 - Two kinds of user: **admin** (everything) and **teacher** (day-to-day tasks, own profile, own password)
 - Passwords are hashed, and accounts lock for 5 minutes after 5 wrong passwords
 
+## Download
+
+You do not need Visual Studio to try it. Download the latest build from the [Releases page](https://github.com/dguo97/School-Register/releases/latest), unzip it and run `SchoolRegister.exe`. Choose the **x64** zip, or the **x86** zip if you have 32-bit Microsoft Office. The zip includes a `READ ME FIRST.txt`.
+
 ## Requirements
 
 - Windows 10 or 11 (.NET Framework 4.8 is included)
-- Visual Studio (the free Community edition is fine) with the **.NET desktop development** workload
-- The **Microsoft Access Database Engine** (ACE OLEDB). It is already installed if you have Microsoft Office with Access. Otherwise install the 2016 redistributable, in the 32-bit or 64-bit version that matches your program.
+- The **Microsoft Access Database Engine** (ACE OLEDB). It is already installed if you have Microsoft Office with Access. Otherwise install the 2016 redistributable, in the 32-bit or 64-bit version that matches the zip you downloaded.
+- To build from source: Visual Studio (the free Community edition is fine) with the **.NET desktop development** workload
 
-## Getting started
+## Build from source
 
 1. Download this repository, or clone it with `git clone https://github.com/dguo97/School-Register.git`.
-2. Open `SchoolRegister.slnx` (or `SchoolRegister.vbproj`) in Visual Studio.
+2. Open `SchoolRegister.slnx` (or `src/SchoolRegister.vbproj`) in Visual Studio.
 3. Build and run.
 4. On first run, if no `Database.accdb` is found, choose **Yes** to create a new empty one. The program creates all the tables it needs.
 5. Open the **Admin** tab and choose an admin password (at least 6 characters).
 6. Add subjects and clubs, then teachers, then pupils.
 
-If you see an error mentioning the "provider", set **Project > Properties > Compile > Platform target** to **x86** (32-bit engine) or **x64** (64-bit engine).
+If you see an error mentioning the "provider", the Access Database Engine is missing or is the wrong type. Set **Project > Properties > Compile > Platform target** to **x86** (32-bit engine) or **x64** (64-bit engine).
 
 ## Database
 
@@ -52,7 +56,7 @@ Databases made by an earlier version are upgraded automatically on first run: pa
 
 ## Customising
 
-These settings sit together near the top of `Db.vb`:
+These settings sit together near the top of `src/Db.vb`:
 
 - `YearLevels`: the choices in the Year drop-down
 - `UniformColumns` / `UniformLabels`: the uniform items (changing them also needs matching columns in the `Uniform` table)
@@ -75,14 +79,19 @@ These settings sit together near the top of `Db.vb`:
 
 ## Project layout
 
-| File | Purpose |
-|---|---|
-| `Signin`, `Adminhome`, `TeacherHomepage` | sign-in and the two home pages |
-| `RegisterForm` | add or edit a pupil or teacher |
-| `ManageForm` | list, search, filter, add, edit and delete screen |
-| `EnrolForm`, `TimetableForm`, `UniformForm`, `RecordDialog`, `PasswordPrompt` | the other screens |
-| `Db.vb`, `DbSchema.vb` | database access, settings, password hashing, table creation |
-| `docs/USER_MANUAL.md` | the user manual |
+```
+School-Register/
+├─ src/                    the program (open SchoolRegister.slnx in Visual Studio)
+│  ├─ Signin, Adminhome, TeacherHomepage    sign-in and the two home pages
+│  ├─ RegisterForm                          add or edit a pupil or teacher
+│  ├─ ManageForm                            list, search, filter, add, edit and delete
+│  ├─ EnrolForm, TimetableForm, UniformForm, RecordDialog, PasswordPrompt   the other screens
+│  ├─ Db.vb, DbSchema.vb                    database access, settings, passwords, table creation
+│  └─ My Project/                           application settings
+├─ docs/                   user manual and the readme that goes inside each release zip
+├─ .github/workflows/      builds the program and publishes releases
+└─ SchoolRegister.slnx     the Visual Studio solution
+```
 
 ## Documentation
 
@@ -91,3 +100,13 @@ The full user manual (setup, admin guide, teacher guide, troubleshooting) is in 
 ## Licence
 
 MIT. See `LICENSE`.
+
+## Publishing a release (for maintainers)
+
+A release builds itself. Once the program builds and runs on your computer:
+
+1. On GitHub open **Releases**, then **Draft a new release**.
+2. Create a new tag such as `v1.0.0`, add a title, and click **Publish release**.
+3. GitHub Actions builds the x86 and x64 versions and attaches both zips to the release (this takes a few minutes; see the **Actions** tab).
+
+You can also push a tag from the command line: `git tag v1.0.0` then `git push origin v1.0.0`.
