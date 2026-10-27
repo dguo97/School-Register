@@ -1,3 +1,9 @@
 <Solution>
-  <Project Path="src/SchoolRegister.vbproj" Id="178f619e-16b3-44e7-b367-86b524cc797f" />
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="src/SchoolRegister.vbproj" Id="178f619e-16b3-44e7-b367-86b524cc797f">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
 </Solution>
