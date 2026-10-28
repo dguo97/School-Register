@@ -37,6 +37,16 @@ You do not need Visual Studio to try it. Download the latest build from the [Rel
 
 If you see an error mentioning the "provider", the Access Database Engine is missing or is the wrong type. Set **Project > Properties > Compile > Platform target** to **x86** (32-bit engine) or **x64** (64-bit engine).
 
+## Troubleshooting
+
+**"Class not registered", or an error mentioning the "provider".** The program cannot see the Microsoft Access Database Engine. A 64-bit program cannot use a 32-bit engine, and the other way round, so the zip you download must match your engine:
+
+- Have 32-bit Microsoft Office? Use the **x86** zip.
+- Have 64-bit Microsoft Office? Use the **x64** zip.
+- No Office? Install the [Access Database Engine 2016 Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=54920) and use the zip of the same type (x64 for the 64-bit engine).
+
+The error message itself says whether the program is running as 32-bit or 64-bit and what it can see.
+
 ## Database
 
 One Access file, `Database.accdb`, kept next to the program (the program also looks up to six folders above it). Tables:

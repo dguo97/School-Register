@@ -15,6 +15,12 @@ School Register - quick start
 4. Open the ADMIN tab and choose an admin password (at least 6 characters).
    Then add subjects and clubs, then teachers, then pupils.
 
+IF YOU SEE "Class not registered" OR A "provider" ERROR
+  The program cannot see the Access Database Engine. The zip must match the engine:
+    32-bit Office (or the 32-bit engine)  ->  use the x86 zip
+    64-bit Office (or the 64-bit engine)  ->  use the x64 zip
+  The error message tells you whether the program is running as 32-bit or 64-bit.
+
 BACK UP Database.accdb regularly. It holds pupils' personal details: keep it in a protected folder.
 Do not put it on a public website or in a public repository.
 

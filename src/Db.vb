@@ -62,8 +62,7 @@ Module Db
             System.Runtime.InteropServices.Marshal.ReleaseComObject(cat)
             Return File.Exists(fullPath)
         Catch ex As Exception
-            MessageBox.Show("A new database could not be created:" & vbNewLine & ex.Message & vbNewLine & vbNewLine & _
-                            "Install the Microsoft Access Database Engine (matching your program, 32-bit or 64-bit) and try again.", _
+            MessageBox.Show("A new database could not be created:" & vbNewLine & ex.Message & vbNewLine & vbNewLine & ProviderHelp(), _
                             "School Register", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return False
         End Try
@@ -81,11 +80,62 @@ Module Db
     End Function
 
     Public Sub ShowError(ByVal ex As Exception)
-        MessageBox.Show("The database could not be used:" & vbNewLine & ex.Message & vbNewLine & vbNewLine & _
-                        "If the message mentions the 'provider', install the Microsoft Access Database Engine " & _
-                        "(ACE OLEDB) matching your program (32-bit or 64-bit).", _
+        MessageBox.Show("The database could not be used:" & vbNewLine & ex.Message & vbNewLine & vbNewLine & ProviderHelp(), _
                         "Database error", MessageBoxButtons.OK, MessageBoxIcon.Error)
     End Sub
+
+    ' "32-bit (x86)" or "64-bit (x64)": which kind of program this is.
+    Public Function ProgramBits() As String
+        If Environment.Is64BitProcess Then
+            Return "64-bit (x64)"
+        End If
+        Return "32-bit (x86)"
+    End Function
+
+    ' True if this program can see the Microsoft Access Database Engine (ACE).
+    ' A 64-bit program cannot see a 32-bit engine, and the other way round.
+    Public Function AceInstalled() As Boolean
+        Try
+            Dim reader As OleDbDataReader = OleDbEnumerator.GetRootEnumerator()
+            Try
+                Do While reader.Read()
+                    Dim name As String = Convert.ToString(reader("SOURCES_NAME"))
+                    If name.StartsWith("Microsoft.ACE.OLEDB") Then
+                        Return True
+                    End If
+                Loop
+            Finally
+                reader.Close()
+            End Try
+        Catch ex As Exception
+            'could not check: treat as not found
+        End Try
+        Return False
+    End Function
+
+    ' Plain-language help, based on what this program can really see on this computer.
+    Public Function ProviderHelp() As String
+        Dim mine As String = "32-bit"
+        Dim other As String = "x64"
+        If Environment.Is64BitProcess Then
+            mine = "64-bit"
+            other = "x86"
+        End If
+
+        Dim sb As New System.Text.StringBuilder
+        sb.Append("This program is running as ").Append(ProgramBits()).Append(".").Append(vbNewLine)
+        If AceInstalled() Then
+            sb.Append("The Microsoft Access Database Engine was found, so the cause is in the message above ")
+            sb.Append("(for example the database file is open in Access, or is in a protected folder).")
+        Else
+            sb.Append("It cannot see the Microsoft Access Database Engine.").Append(vbNewLine).Append(vbNewLine)
+            sb.Append("How to fix it:").Append(vbNewLine)
+            sb.Append("1. Install the Microsoft Access Database Engine from Microsoft (search for ""Microsoft Access Database Engine 2016 Redistributable""). Choose the ").Append(mine).Append(" version.").Append(vbNewLine)
+            sb.Append("2. Or, if you already have Microsoft Office, download the ").Append(other).Append(" version of School Register instead (it must match your Office: 32-bit Office needs x86, 64-bit Office needs x64).").Append(vbNewLine)
+            sb.Append("3. Or, if you have Microsoft Access, create a blank database called Database.accdb in the program folder, then start this program again.")
+        End If
+        Return sb.ToString()
+    End Function
 
     ' ID of the row just inserted (call on the same open connection, straight after the INSERT).
     Public Function LastInsertId(ByVal con As OleDbConnection, Optional ByVal tx As OleDbTransaction = Nothing) As Integer

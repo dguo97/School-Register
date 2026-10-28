@@ -255,7 +255,7 @@ After signing in, the **Teacher home** page shows your name and Teacher ID in it
 
 | Problem | What to do |
 | --- | --- |
-| A message mentions the "provider" or "ACE OLEDB" | Install the Microsoft Access Database Engine that matches the program (32-bit or 64-bit) |
+| A message mentions the "provider" or "ACE OLEDB" | Install the Microsoft Access Database Engine that matches the program (32-bit or 64-bit). If you downloaded the x64 zip but have 32-bit Office, use the x86 zip instead, and the other way round. The error message says whether the program is 32-bit or 64-bit |
 | School Register asks you to locate Database.accdb | Browse to the file. To avoid this, keep the file next to the program or in the project folder |
 | "Database error" when School Register starts | Close Database.accdb if it is open in Access, then start School Register again |
 | "Teacher ID or password is incorrect" | Check the ID (for example T7) and the password. The message is the same for both on purpose |
